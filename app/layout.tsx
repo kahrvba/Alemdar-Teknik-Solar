@@ -1,13 +1,12 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
+import { RootClientWrapper } from "@/components/wrapper/RootClientWrapper";
 
 import { siteConfig } from "@/lib/config/site";
 import { fontSans } from "@/lib/config/fonts";
-import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
   title: {
@@ -42,15 +41,9 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-          <div className="relative flex flex-col h-screen">
-            <Navbar />
-            <main className="flex flex-col flex-grow pt-10 px-4">
-              {children}
-            </main>
-            <footer className="w-full flex items-center justify-center py-3">
-
-            </footer>
-          </div>
+          <RootClientWrapper>
+            {children}
+          </RootClientWrapper>
         </Providers>
       </body>
     </html>
