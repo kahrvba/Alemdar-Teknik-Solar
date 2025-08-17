@@ -93,132 +93,138 @@ export const TimeFilter: React.FC<TimeFilterProps> = ({
     };
 
     return (
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-white ">
-            {/* Time Range Selector */}
-            <div className="relative" ref={timeDropdownRef}>
-                <button
-                    onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}
-                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                >
-                    <Clock className="w-4 h-4 text-gray-500" />
-                    <span className="hidden sm:inline">{selectedTimeRange.label}</span>
-                    <span className="sm:hidden">{selectedTimeRange.value}</span>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                </button>
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-2 sm:p-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
+                {/* Time Range Selector */}
+                <div className="relative flex-1 sm:flex-none" ref={timeDropdownRef}>
+                    <button
+                        onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}
+                        className="w-full sm:w-auto flex items-center justify-between gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    >
+                        <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-gray-500" />
+                            <span className="hidden sm:inline">{selectedTimeRange.label}</span>
+                            <span className="sm:hidden text-xs">{selectedTimeRange.value}</span>
+                        </div>
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </button>
 
-                {isTimeDropdownOpen && (
-                    <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                        <div className="p-4">
-                            {/* Tabs */}
-                            <div className="flex border-b border-gray-200 mb-4">
-                                <button
-                                    onClick={() => setIsCustomMode(false)}
-                                    className={`px-3 py-2 text-sm font-medium ${!isCustomMode ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-                                >
-                                    Relative time ranges
-                                </button>
-                                <button
-                                    onClick={() => setIsCustomMode(true)}
-                                    className={`px-3 py-2 text-sm font-medium ${isCustomMode ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-                                >
-                                    Absolute time range
-                                </button>
-                            </div>
-
-                            {!isCustomMode ? (
-                                /* Relative Time Ranges */
-                                <div className="space-y-1">
-                                    {TIME_RANGES.map((range) => (
-                                        <button
-                                            key={range.value}
-                                            onClick={() => {
-                                                onTimeRangeChange(range);
-                                                setIsTimeDropdownOpen(false);
-                                            }}
-                                            className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-50 flex items-center justify-between ${selectedTimeRange.value === range.value ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
-                                                }`}
-                                        >
-                                            <span>{range.label}</span>
-                                            {selectedTimeRange.value === range.value && (
-                                                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-                            ) : (
-                                /* Custom Time Range */
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
-                                        <input
-                                            type="datetime-local"
-                                            value={customFrom}
-                                            onChange={(e) => setCustomFrom(e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
-                                        <input
-                                            type="datetime-local"
-                                            value={customTo}
-                                            onChange={(e) => setCustomTo(e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
+                    {isTimeDropdownOpen && (
+                        <div className="absolute top-full left-0 mt-1 w-full sm:w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                            <div className="p-3 sm:p-4">
+                                {/* Tabs */}
+                                <div className="flex border-b border-gray-200 mb-3 sm:mb-4">
                                     <button
-                                        onClick={handleCustomTimeApply}
-                                        disabled={!customFrom || !customTo}
-                                        className="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                        onClick={() => setIsCustomMode(false)}
+                                        className={`px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium ${!isCustomMode ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
                                     >
-                                        Apply time range
+                                        Relative
+                                    </button>
+                                    <button
+                                        onClick={() => setIsCustomMode(true)}
+                                        className={`px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium ${isCustomMode ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+                                    >
+                                        Custom
                                     </button>
                                 </div>
-                            )}
+
+                                {!isCustomMode ? (
+                                    /* Relative Time Ranges */
+                                    <div className="space-y-1">
+                                        {TIME_RANGES.map((range) => (
+                                            <button
+                                                key={range.value}
+                                                onClick={() => {
+                                                    onTimeRangeChange(range);
+                                                    setIsTimeDropdownOpen(false);
+                                                }}
+                                                className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-50 flex items-center justify-between ${selectedTimeRange.value === range.value ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                                                    }`}
+                                            >
+                                                <span className="text-xs sm:text-sm">{range.label}</span>
+                                                {selectedTimeRange.value === range.value && (
+                                                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    /* Custom Time Range */
+                                    <div className="space-y-3 sm:space-y-4">
+                                        <div>
+                                            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">From</label>
+                                            <input
+                                                type="datetime-local"
+                                                value={customFrom}
+                                                onChange={(e) => setCustomFrom(e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">To</label>
+                                            <input
+                                                type="datetime-local"
+                                                value={customTo}
+                                                onChange={(e) => setCustomTo(e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={handleCustomTimeApply}
+                                            disabled={!customFrom || !customTo}
+                                            className="w-full px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
 
-            {/* Refresh Button */}
-            <button
-                onClick={onRefresh}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-            >
-                <RotateCcw className="w-4 h-4" />
-                <span className="hidden sm:inline">Refresh</span>
-            </button>
-
-            {/* Auto Refresh Selector */}
-            <div className="relative" ref={refreshDropdownRef}>
+                {/* Refresh Button */}
                 <button
-                    onClick={() => setIsRefreshDropdownOpen(!isRefreshDropdownOpen)}
-                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    onClick={onRefresh}
+                    className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
-                    <span className="hidden sm:inline">Auto-refresh:</span>
-                    <span>{selectedRefreshInterval.label}</span>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                    <RotateCcw className="w-4 h-4" />
+                    <span className="hidden sm:inline">Refresh</span>
                 </button>
 
-                {isRefreshDropdownOpen && (
-                    <div className="absolute top-full right-0 mt-1 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                        <div className="py-1">
-                            {REFRESH_INTERVALS.map((interval) => (
-                                <button
-                                    key={interval.value}
-                                    onClick={() => {
-                                        onRefreshIntervalChange(interval);
-                                        setIsRefreshDropdownOpen(false);
-                                    }}
-                                    className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${selectedRefreshInterval.value === interval.value ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
-                                        }`}
-                                >
-                                    {interval.label}
-                                </button>
-                            ))}
+                {/* Auto Refresh Selector */}
+                <div className="relative" ref={refreshDropdownRef}>
+                    <button
+                        onClick={() => setIsRefreshDropdownOpen(!isRefreshDropdownOpen)}
+                        className="w-full sm:w-auto flex items-center justify-between gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    >
+                        <span className="text-xs sm:text-sm">
+                            <span className="hidden sm:inline">Auto: </span>
+                            {selectedRefreshInterval.label}
+                        </span>
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </button>
+
+                    {isRefreshDropdownOpen && (
+                        <div className="absolute top-full right-0 mt-1 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                            <div className="py-1">
+                                {REFRESH_INTERVALS.map((interval) => (
+                                    <button
+                                        key={interval.value}
+                                        onClick={() => {
+                                            onRefreshIntervalChange(interval);
+                                            setIsRefreshDropdownOpen(false);
+                                        }}
+                                        className={`w-full text-left px-3 py-2 text-xs sm:text-sm hover:bg-gray-50 ${selectedRefreshInterval.value === interval.value ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                                            }`}
+                                    >
+                                        {interval.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );

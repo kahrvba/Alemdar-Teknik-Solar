@@ -153,19 +153,19 @@ const BatteryChart = ({
     }, []);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Chart Title with enhanced styling */}
             <div className="text-center space-y-2">
-                <h3 className="text-xl font-bold text-gray-800 tracking-tight">{title}</h3>
-                <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full mx-auto"></div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800 tracking-tight">{title}</h3>
+                <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full mx-auto"></div>
             </div>
 
-            {/* Chart Container with enhanced spacing */}
-            <div className="h-[320px] w-full bg-gradient-to-br from-gray-50/30 to-white rounded-xl p-4">
+            {/* Chart Container with responsive height */}
+            <div className="h-[280px] sm:h-[320px] lg:h-[350px] w-full bg-gradient-to-br from-gray-50/30 to-white rounded-lg sm:rounded-xl p-3 sm:p-4">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                         data={data}
-                        margin={{ top: 20, right: 40, left: 60, bottom: 80 }}
+                        margin={{ top: 20, right: 30, left: 50, bottom: 80 }}
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
                     >
@@ -184,7 +184,7 @@ const BatteryChart = ({
                             axisLine={false}
                             tickLine={false}
                             tick={{
-                                fontSize: 11,
+                                fontSize: 12,
                                 fill: '#6b7280',
                                 fontWeight: 500
                             }}
@@ -201,12 +201,12 @@ const BatteryChart = ({
                             axisLine={false}
                             tickLine={false}
                             tick={{
-                                fontSize: 12,
+                                fontSize: 13,
                                 fill: '#6b7280',
                                 fontWeight: 500
                             }}
                             tickFormatter={(value) => `${value}${unit}`}
-                            width={50}
+                            width={55}
                         />
 
                         {/* Reference line for power chart */}
@@ -256,7 +256,7 @@ const BatteryChart = ({
             </div>
 
             {/* Enhanced Status Info */}
-            <div className="flex justify-center space-x-8 text-sm">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm">
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div>
                     <span className="text-gray-600">Current Time</span>
@@ -280,9 +280,9 @@ const BatteryChart = ({
 
 export const BatteryCharts: React.FC = () => {
     return (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             {/* Charts Container */}
-            <div className="p-4 space-y-12">
+            <div className="p-3 sm:p-4 lg:p-6 space-y-8 sm:space-y-10 lg:space-y-12">
                 {/* Battery Power Chart */}
                 <BatteryChart
                     title="Battery Power"

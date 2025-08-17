@@ -26,10 +26,11 @@ export default function ChartsPage() {
     };
 
     return (
-        <div className="min-h-screen p-2 sm:p-4 lg:p-6">
-            <div className="w-full mx-auto space-y-6 sm:space-y-8">
-                {/* Global Time Filter at the top */}
-                <div className="flex justify-end items-end">
+        <div className="min-h-screen p-8 sm:p-4">
+            <div className="w-full mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
+
+                {/* Global Time Filter - Full width on mobile */}
+                <div className="w-full">
                     <TimeFilter
                         selectedTimeRange={selectedTimeRange}
                         selectedRefreshInterval={selectedRefreshInterval}
@@ -39,32 +40,23 @@ export default function ChartsPage() {
                     />
                 </div>
 
-                {/* Single Column Layout */}
-                <div className="  space-y-8 sm:space-y-12">
+                {/* Charts Layout - Seamless without containers */}
+                <div className="space-y-10 sm:space-y-1 ">
                     {/* Battery Charts - Interactive Dashboard */}
-                    <section className=" space-y-3 sm:space-y-4 ">
-
-                        <BatteryCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
-                    </section>
+                    <BatteryCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
 
                     {/* MPPT Charts */}
-                    <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 p-3 sm:p-6">
-                        <MPPTCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
-                    </section>
+                    <MPPTCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
 
                     {/* Battery System Charts */}
-                    <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 p-3 sm:p-6">
-                        <BatterySystemCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
-                    </section>
+                    <BatterySystemCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
 
                     {/* Grid and System Charts */}
-                    <section className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 p-3 sm:p-6">
-                        <GridSystemCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
-                    </section>
+                    <GridSystemCharts timeRange={selectedTimeRange} refreshKey={refreshKey} />
                 </div>
 
                 {/* Footer */}
-                <div className="text-center text-gray-500 text-xs sm:text-sm py-6 sm:py-8 px-4">
+                <div className="text-center text-gray-500 text-xs sm:text-sm py-4 sm:py-6 px-2">
                     <p>Solar Assistant - Real-time monitoring system</p>
                     <p className="mt-1">Last updated: {new Date().toLocaleString()}</p>
                 </div>

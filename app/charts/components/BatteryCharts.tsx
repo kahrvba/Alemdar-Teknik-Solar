@@ -86,8 +86,23 @@ const BatteryChart = ({
     gradient?: boolean;
 }) => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [isMobile, setIsMobile] = useState(false);
     const currentHour = new Date().getHours();
     const currentTimeString = `${currentHour.toString().padStart(2, '0')}:00`;
+
+    // Detect if on mobile device
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+        
+        return () => {
+            window.removeEventListener('resize', checkIfMobile);
+        };
+    }, []);
 
     const handleMouseMove = useCallback((data: any) => {
         if (data && data.activeTooltipIndex !== undefined) {
@@ -100,19 +115,22 @@ const BatteryChart = ({
     }, []);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-3 sm:space-y-6">
             {/* Chart Title with enhanced styling */}
-            <div className="text-center space-y-2">
-                <h3 className="text-xl font-bold text-gray-800 tracking-tight">{title}</h3>
-                <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full mx-auto"></div>
+            <div className="text-center space-y-1 sm:space-y-2">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800 tracking-tight">{title}</h3>
+                <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full mx-auto"></div>
             </div>
 
-            {/* Chart Container with enhanced spacing */}
-            <div className="h-[320px] w-full p-4">
+            {/* Chart Container with enhanced spacing - more compact on mobile */}
+            <div className="h-[250px] sm:h-[320px] w-full p-2 sm:p-4">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                         data={data}
-                        margin={{ top: 20, right: 40, left: 60, bottom: 80 }}
+                        margin={isMobile 
+                            ? { top: 10, right: 10, left: 25, bottom: 60 } 
+                            : { top: 20, right: 40, left: 60, bottom: 80 }
+                        }
                         onMouseMove={handleMouseMove}
                         onMouseLeave={handleMouseLeave}
                     >
@@ -125,21 +143,21 @@ const BatteryChart = ({
                             vertical={true}
                         />
 
-                        {/* X-Axis with all time points visible */}
+                        {/* X-Axis with limited ticks on mobile */}
                         <XAxis
                             dataKey="time"
                             axisLine={false}
                             tickLine={false}
                             tick={{
-                                fontSize: 11,
+                                fontSize: isMobile ? 9 : 11,
                                 fill: '#6b7280',
                                 fontWeight: 500
                             }}
-                            interval={0} // Show all time points
+                            interval={isMobile ? 'preserveStartEnd' : 0} // Show fewer points on mobile
                             angle={-45}
                             textAnchor="end"
-                            height={80}
-                            tickMargin={15}
+                            height={isMobile ? 60 : 80}
+                            tickMargin={isMobile ? 10 : 15}
                         />
 
                         {/* Y-Axis with enhanced styling */}
@@ -148,12 +166,12 @@ const BatteryChart = ({
                             axisLine={false}
                             tickLine={false}
                             tick={{
-                                fontSize: 12,
+                                fontSize: isMobile ? 10 : 12,
                                 fill: '#6b7280',
                                 fontWeight: 500
                             }}
                             tickFormatter={(value) => `${value}${unit}`}
-                            width={50}
+                            width={isMobile ? 35 : 50}
                         />
 
                         {/* Reference line for power chart */}
@@ -182,7 +200,7 @@ const BatteryChart = ({
                             dataKey={type === 'power' ? 'power' : 'stateOfCharge'}
                             stroke={type === 'power' ? '#10b981' : '#3b82f6'}
                             fill={type === 'power' ? '#dcfce7' : '#dbeafe'}
-                            strokeWidth={3}
+                            strokeWidth={isMobile ? 2 : 3}
                             fillOpacity={0.6}
                             dot={false}
                             activeDot={<CustomDot />}
@@ -202,20 +220,20 @@ const BatteryChart = ({
                 </ResponsiveContainer>
             </div>
 
-            {/* Enhanced Status Info */}
-            <div className="flex justify-center space-x-8 text-sm">
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            {/* Enhanced Status Info - adjusted for mobile */}
+            <div className="flex flex-wrap justify-center space-x-3 sm:space-x-8 text-xs sm:text-sm">
+                <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
                     <span className="text-gray-600">Current Time</span>
                 </div>
                 {type === 'power' && (
                     <>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
                             <span className="text-gray-600">Charging</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div className="flex items-center gap-1 sm:gap-2 mb-1">
+                            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-400"></div>
                             <span className="text-gray-600">Discharging</span>
                         </div>
                     </>
@@ -227,14 +245,30 @@ const BatteryChart = ({
 
 export const BatteryCharts: React.FC<{ timeRange: TimeRange; refreshKey: number }> = ({ timeRange, refreshKey }) => {
     const [batteryData, setBatteryData] = useState<any[]>([]);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         const data = generateBatteryDataForTimeRange(timeRange);
         setBatteryData(data);
+
+        // Check if on mobile
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+        
+        return () => {
+            window.removeEventListener('resize', checkIfMobile);
+        };
     }, [timeRange, refreshKey]);
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-6 sm:space-y-12">
+
+            
+            
             {/* Battery Power Chart */}
             <BatteryChart
                 title="Battery Power"
@@ -245,8 +279,8 @@ export const BatteryCharts: React.FC<{ timeRange: TimeRange; refreshKey: number 
                 unit="kW"
             />
 
-            {/* Divider */}
-            <div className="border-t border-gray-200 my-8"></div>
+            {/* Divider - thinner on mobile */}
+            <div className="border-t border-gray-200 my-4 sm:m-8"></div>
 
             {/* Battery State of Charge Chart */}
             <BatteryChart
