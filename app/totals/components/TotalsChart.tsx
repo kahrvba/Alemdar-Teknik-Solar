@@ -89,14 +89,23 @@ export const TotalsChart: React.FC<TotalsChartProps> = ({ data, timeRange, heigh
         ));
 
         // Round up to a nice number for the y-axis
-        const roundedMax = Math.ceil(maxValue / 100) * 100;
-        const tickInterval = Math.max(Math.ceil(roundedMax / 6 / 100) * 100, 100);
+        const roundedMax = Math.max(50, Math.ceil(maxValue / 10) * 10);
+
+        let tickInterval;
+        if (timeRange === '30d') {
+            // For daily data, use smaller increments
+            tickInterval = Math.max(Math.ceil(roundedMax / 5 / 10) * 10, 5);
+        } else {
+            // For weekly/monthly data, use larger increments
+            tickInterval = Math.max(Math.ceil(roundedMax / 6 / 100) * 100, 100);
+        }
+
         const customTicks = Array.from({ length: 6 }, (_, i) => i * tickInterval);
 
         switch (timeRange) {
             case '30d':
                 return {
-                    ticks: customTicks.length > 0 ? customTicks : [0, 20, 40, 60, 80, 100],
+                    ticks: customTicks.length > 0 ? customTicks : [0, 10, 20, 30, 40, 50],
                     label: 'kWh'
                 };
             case '52w':
@@ -107,13 +116,11 @@ export const TotalsChart: React.FC<TotalsChartProps> = ({ data, timeRange, heigh
                 };
             default:
                 return {
-                    ticks: customTicks.length > 0 ? customTicks : [0, 20, 40, 60, 80, 100],
+                    ticks: customTicks.length > 0 ? customTicks : [0, 10, 20, 30, 40, 50],
                     label: 'kWh'
                 };
         }
-    };
-
-    const yAxisConfig = getYAxisConfig();
+    }; const yAxisConfig = getYAxisConfig();
 
     return (
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm w-full" ref={chartContainerRef}>
@@ -150,6 +157,7 @@ export const TotalsChart: React.FC<TotalsChartProps> = ({ data, timeRange, heigh
                                 axisLine={{ stroke: '#e5e7eb' }}
                                 tickLine={false}
                                 padding={{ left: 10, right: 10 }}
+                                interval={timeRange === '30d' ? (data.length > 15 ? 'preserveStartEnd' : 0) : 0}
                             />
                             <YAxis
                                 tickCount={6}

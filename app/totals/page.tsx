@@ -8,17 +8,32 @@ import { DetailedTable } from './components/DetailedTable';
 const generateDynamicDates = () => {
     const today = new Date();
 
-    // Generate 30 days data (past 30 days with weekly intervals)
+    // Generate 30 days data for each of the past 30 days
     const chartData30d = [];
-    for (let i = 4; i >= 0; i--) {
+    for (let i = 29; i >= 0; i--) {
         const date = new Date(today);
-        date.setDate(today.getDate() - i * 7);
+        date.setDate(today.getDate() - i);
         const formattedDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' }).format(date);
 
         // Generate realistic-looking values with some randomization around a baseline
-        const loadBase = 10 + Math.floor(Math.random() * 15);
-        const solarPVBase = 15 + Math.floor(Math.random() * 25);
-        const gridBase = Math.random() > 0.7 ? Math.floor(Math.random() * 5) : 0;
+        const dayOfWeek = date.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+        // Create some patterns - weekends have different usage patterns
+        const loadBase = isWeekend
+            ? 15 + Math.floor(Math.random() * 10)
+            : 8 + Math.floor(Math.random() * 12);
+
+        // Solar generation depends on weather patterns - create some cloudy days
+        const isCloudy = Math.random() > 0.7;
+        const solarPVBase = isCloudy
+            ? 5 + Math.floor(Math.random() * 10)
+            : 15 + Math.floor(Math.random() * 25);
+
+        // Grid usage happens only occasionally when solar isn't enough
+        const gridBase = solarPVBase < loadBase
+            ? Math.ceil(Math.max(0, loadBase - solarPVBase) * (0.8 + Math.random() * 0.4))
+            : 0;
 
         chartData30d.push({
             name: formattedDate,
@@ -60,21 +75,50 @@ const generateTableData = () => {
 
     // Generate daily data for the last 30 days
     const dailyData = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 30; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
         const formattedDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit' }).format(date);
 
-        // Determine if we should populate with zeroes or real data (first few days have real data)
-        const hasData = i > 2 && i < 8;
+        // Create patterns in the data
+        const dayOfWeek = date.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const hasData = i < 20; // First 20 days have data, older days might have zeroes
+
+        // Create some weather patterns
+        const isCloudy = Math.random() > 0.7;
+        const solarValue = hasData ?
+            (isCloudy ? (5 + Math.random() * 15) : (20 + Math.random() * 80)).toFixed(1) :
+            '0';
+
+        // Create load patterns (weekends have different usage)
+        const loadValue = hasData ?
+            (isWeekend ? (10 + Math.random() * 15) : (7 + Math.random() * 12)).toFixed(1) :
+            '0';
+
+        // Battery charging depends on solar generation
+        const batteryChargedValue = hasData && parseFloat(solarValue) > parseFloat(loadValue) ?
+            (Math.min(parseFloat(solarValue) - parseFloat(loadValue), 25) * (0.7 + Math.random() * 0.3)).toFixed(1) :
+            '0';
+
+        // Battery discharging happens when load exceeds solar
+        const batteryDischargedValue = hasData && parseFloat(solarValue) < parseFloat(loadValue) ?
+            (Math.min(parseFloat(loadValue) - parseFloat(solarValue), 15) * (0.6 + Math.random() * 0.4)).toFixed(1) :
+            '0';
+
+        // Grid used when both solar and battery can't meet demand
+        const gridUsedValue = hasData &&
+            parseFloat(solarValue) + parseFloat(batteryDischargedValue) < parseFloat(loadValue) ?
+            (parseFloat(loadValue) - parseFloat(solarValue) - parseFloat(batteryDischargedValue)).toFixed(1) :
+            '0';
 
         dailyData.push({
             period: formattedDate,
-            load: hasData ? `${(Math.random() * 25).toFixed(1)} kWh` : '0 kWh',
-            solarPV: hasData ? `${(Math.random() * 100).toFixed(1)} kWh` : '0 kWh',
-            batteryCharged: hasData ? `${(Math.random() * 25).toFixed(1)} kWh` : '0 kWh',
-            batteryDischarged: hasData ? `${(Math.random() * 15).toFixed(1)} kWh` : '0 kWh',
-            gridUsed: hasData ? `${(Math.random() > 0.8 ? Math.random() * 5 : 0).toFixed(1)} kWh` : '0 kWh',
+            load: `${loadValue} kWh`,
+            solarPV: `${solarValue} kWh`,
+            batteryCharged: `${batteryChargedValue} kWh`,
+            batteryDischarged: `${batteryDischargedValue} kWh`,
+            gridUsed: `${gridUsedValue} kWh`,
             gridExported: '0 kWh'
         });
     }
