@@ -81,15 +81,15 @@ export const CircularGauge: React.FC<CircularGaugeProps> = ({
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <div className="flex items-baseline gap-1">
-                        <span className="text-xl font-semibold" style={{ color }}>
+                        <span className="text-lg sm:text-xl font-semibold" style={{ color }}>
                             {Math.round(animatedValue)}
                         </span>
-                        <span className="text-sm text-gray-500">{unit}</span>
+                        <span className="text-xs sm:text-sm text-gray-500">{unit}</span>
                     </div>
                 </div>
             </div>
             <div className="flex flex-col items-center mt-2">
-                <span className="text-sm font-medium text-gray-600">{label}</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-600 text-center">{label}</span>
             </div>
         </div>
     );

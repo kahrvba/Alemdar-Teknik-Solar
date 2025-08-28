@@ -9,7 +9,7 @@ export const MobileBottomNav = () => {
     const pathname = usePathname();
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-gray-200 shadow-lg z-10">
+        <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-gray-200 shadow-lg z-10 safe-area-pb">
             <div className="flex items-center justify-between px-2 py-2">
                 {siteConfig.navItems.map((item, idx) => {
                     // Only show first 5 navigation items
@@ -32,13 +32,13 @@ export const MobileBottomNav = () => {
                         <NextLink
                             key={item.href}
                             href={item.href}
-                            className={`flex flex-col items-center justify-center p-2 rounded-lg ${isActive
-                                    ? 'text-orange-500'
-                                    : 'text-gray-600 hover:text-orange-500'
+                            className={`flex flex-col items-center justify-center p-2 rounded-lg min-w-0 flex-1 ${isActive
+                                ? 'text-blue-600 bg-blue-50'
+                                : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
                                 }`}
                         >
                             {icon}
-                            <span className="text-[10px] mt-1">{item.label}</span>
+                            <span className="text-[10px] mt-1 truncate w-full text-center">{item.label}</span>
                         </NextLink>
                     );
                 })}
